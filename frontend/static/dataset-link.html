@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4/dist/echarts.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@1/dist/echarts-gl.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat@1/dist/ecStat.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4/dist/extension/dataTool.min.js"></script>
+  <script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+
+    setTimeout(function () {
+
+      option = {
+        legend: {},
+        tooltip: {
+          trigger: 'axis',
+          showContent: false
+        },
+        dataset: {
+          source: [
+            ['product', '2021/12/6', '2021/12/7', '2021/12/8', '2021/12/9', '2021/12/10', '2021/12/11',
+              '2021/12/14', '2021/12/15', '2021/12/16', '2021/12/17', '2021/12/18', '2021/12/20', '2021/12/21',
+              '2021/12/22', '2021/12/23', '2021/12/24', '2021/12/25', '2021/12/27'
+            ],
+            ['训练时长', 3.3, 2, 0.7, 2, 1.7, 1.7, 2.5, 0, 0.75, 2, 2, 2.5, 1.8, 1, 1.8, 2.17, 1.7, 1.3],
+            ['睡眠时长', 7.3, 7, 7.8, 7.3, 7.3, 7.3, 6.8, 7.2, 7, 7, 6.3, 7.2, 7.5, 7.2, 7, 6.9, 6.25, 6.3],
+            ['主观疲劳程度等级', 3, 4, 1, 4, 4, 4, 2, 1, 1, 2, 3, 4, 3, 2, 4, 3, 4, 3],
+            //['Walnut Brownie', 55.2, 67.1, 69.2, 72.4, 53.9, 39.1]
+          ]
+        },
+        xAxis: {
+          type: 'category'
+        },
+        yAxis: {
+          gridIndex: 0
+        },
+        grid: {
+          top: '55%'
+        },
+        series: [{
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          },
+          //{type: 'line', smooth: true, seriesLayoutBy: 'row'},
+          {
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }
+        ]
+      };
+
+      myChart.on('updateAxisPointer', function (event) {
+        var xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+          var dimension = xAxisInfo.value + 1;
+          myChart.setOption({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+        }
+      });
+
+      myChart.setOption(option);
+
+    });;
+    if (option && typeof option === "object") {
+      myChart.setOption(option, true);
+    }
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+  <meta charset="utf-8">
+
+</head>
+
+<body style="height: 90vh;">
+  <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+  <div id="container" style="width: 1100px; height:500px;"></div>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4/dist/echarts.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@1/dist/echarts-gl.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat@1/dist/ecStat.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4/dist/extension/dataTool.min.js"></script>
+  <script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+
+    var categoryData = []; //x轴名字
+
+    var errorData = []; //红色的显示正常范围，里面元素是列表
+
+    var barData = []; //蓝色的测得数据
+
+
+
+    errorData.push(['2021-9-13', 243, 204]);
+    categoryData.push(2);
+    errorData.push(['2021-12-14', 246, 220]);
+    barData.push(240); //具体数据
+
+    errorData.push(['HB', 650, 622]);
+
+
+    // 自定义图形渲染逻辑，对于红色的来说
+    function renderItem(params, api) {
+      var halfWidth = api.size([1, 0])[0] * 0.1; //红色界限的长度
+      var xValue = api.value(0);
+      var highPoint = api.coord([xValue, api.value(1)]);
+      var lowPoint = api.coord([xValue, api.value(2)]);
+      var style = api.style({
+        stroke: api.visual('color'),
+        fill: null
+      });
+
+      return {
+        type: 'group',
+        children: [{
+          type: 'line',
+          shape: {
+            x1: highPoint[0] - halfWidth,
+            y1: highPoint[1],
+            x2: highPoint[0] + halfWidth,
+            y2: highPoint[1]
+          },
+          style: style
+        }, {
+          type: 'line',
+          shape: {
+            x1: highPoint[0],
+            y1: highPoint[1],
+            x2: lowPoint[0],
+            y2: lowPoint[1]
+          },
+          style: style
+        }, {
+          type: 'line',
+          shape: {
+            x1: lowPoint[0] - halfWidth,
+            y1: lowPoint[1],
+            x2: lowPoint[0] + halfWidth,
+            y2: lowPoint[1]
+          },
+          style: style
+        }]
+      };
+    }
+
+    option = {
+      tooltip: { //提示框组件
+        trigger: 'axis', //触发类型
+        axisPointer: { //坐标轴指示器配置
+          type: 'shadow' //阴影指示器
+        }
+      },
+      title: { //表名
+        text: '生理生化数据'
+      },
+      legend: { //图例，
+        data: ['bar', 'error']
+      },
+      dataZoom: [{ //数据区缩放组件
+        type: 'slider',
+        start: 50,
+        end: 70
+      }, {
+        type: 'inside',
+        start: 50,
+        end: 70
+      }],
+      dataset: {
+        source: [
+          // 0               1   2     3     4     5       6       7      8       9    10        11      12    13    14   15
+          ['datetime', 'HB', 'RBC', 'WBC', 'HCT', 'MCV', 'MCH', 'MCHC', 'CV', 'T', 'CREA', 'UREA', 'CK', 'GLU',
+            'LDH', 'C'
+          ],
+          ['2021-9-13', 148.00, 4.85, 5.54, 45.15, 93.15, 30.56, 328.1, 12.82, 1.81, 69.06, 5.54, 168.47, 5.3,
+            161.84, 10.93
+          ],
+          ['2021-12-14', 133.00, 4.38, 5.05, 37.2, 0, 0, 0, 13, 0.13, 78.8, 4.38, 105, 4.17, 149.3, 0]
+        ]
+      },
+      xAxis: {
+        type: 'category' //坐标轴类型
+      },
+      yAxis: {},
+      series: [{
+          type: 'bar', //柱状图类型
+          name: 'HB',
+          encode: {
+            x: 0,
+            y: 1
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77aef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'RBC',
+          encode: {
+            x: 0,
+            y: 2
+          }, //数据来自dataset
+          itemStyle: {
+            color: '#44bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'WBC',
+          encode: {
+            x: 0,
+            y: 3
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'HCT',
+          encode: {
+            x: 0,
+            y: 4
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'MCV',
+          encode: {
+            x: 0,
+            y: 5
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'MCH',
+          encode: {
+            x: 0,
+            y: 6
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'MCHC',
+          encode: {
+            x: 0,
+            y: 7
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'CV',
+          encode: {
+            x: 0,
+            y: 8
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'T',
+          encode: {
+            x: 0,
+            y: 9
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'CREA',
+          encode: {
+            x: 0,
+            y: 10
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'UREA',
+          encode: {
+            x: 0,
+            y: 11
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'CK',
+          encode: {
+            x: 0,
+            y: 12
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'GLU',
+          encode: {
+            x: 0,
+            y: 13
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'LDH',
+          encode: {
+            x: 0,
+            y: 14
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'bar', //柱状图类型
+          name: 'C',
+          encode: {
+            x: 0,
+            y: 15
+          }, //数据来自bardata
+          itemStyle: {
+            color: '#77bef7' //颜色
+          }
+        },
+        {
+          type: 'custom', //自定义类型
+          name: 'error', //名称
+          itemStyle: {
+            normal: {
+              borderWidth: 1.5 //红色线的宽度
+            },
+            color: '#EE2C2C'
+          },
+          renderItem: renderItem, //图形渲染逻辑，上面定义过了
+          encode: { //定义 data 的哪个维度被编码成什么
+            x: 0, //这里我们数据项只有3个，第一个映射到x
+            y: [1, 2] //第二个和第三映射到y轴
+          },
+          data: [
+            ['datetime', 'HB', 'RBC', 'WBC', 'HCT', 'MCV', 'MCH', 'MCHC', 'CV', 'T', 'CREA', 'UREA', 'CK', 'GLU',
+              'LDH', 'C'
+            ]
+            ['2021-9-13', [150, 110],
+              [5.5, 5.3],
+              [10, 4],
+              [54, 37],
+              [98, 81.8],
+              [32.3, 27],
+              [350, 318],
+              [16, 11],
+              [0.82, 0.06],
+              [88, 44],
+              [8.30, 1.70],
+              [170, 24],
+              [6.11, 3.33],
+              [250, 120],
+              [24, 4.5]
+            ]
+            //['HB',150,110],
+            //['RBC',5.5,5.3],
+            //['WBC',10,4],
+            //['HCT',54,37],
+            //['MCV',98,81.8],
+            //['MCH',32.3,27],
+            //['MCHC',350,318],
+            //['CV',16,11],
+            //['T', 0.82,0.06],
+            //['CREA',88,44],
+            //['UREA',8.30,1.70],
+            //['CK',170,24],
+            //['GLU',6.11,3.33],
+            //['LDH',250,120  ],
+            //['C',24,4.5],
+          ], //data是数据内容数组，这里来自于errordata
+          z: 100, //z值，z值小的会被z值大的覆盖
+
+        }
+      ]
+    };
+
+    if (option && typeof option === "object") {
+      myChart.setOption(option, true);
+    }
+
+  </script>
+</body>
+
+</html>
